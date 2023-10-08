@@ -1,0 +1,84 @@
+
+/*body, html {*/
+/*    height: 100%;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+
+/*.wrapper {*/
+/*    display: flex;*/
+/*    height: 100%;*/
+/*}*/
+
+/*.leftSection, .rightSection {*/
+/*    flex: 0 0 auto;!* Устанавливаем фиксированную ширину (например, 50px) для левой и правой секций *!*/
+/*    background-color: red;*/
+/*}*/
+
+/*.mainContent {*/
+/*    flex: 1; !* Главный контент занимает оставшееся пространство *!*/
+/*    background-color: orange;*/
+/*    text-align: center;*/
+/*}*/
+
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper {
+    display: flex;
+    height: 100%;
+
+
+}
+
+
+
+.leftSection, .rightSection {
+    flex: 1;
+    background-color: orange;
+    width: 20%;
+
+}
+
+.mainContent {
+    margin-top: 0vh;
+    flex: 1;
+    background-color: yellow;
+    position: relative;
+    text-align: center;
+    word-wrap: break-word;
+    height: 100vh;
+}
+
+.leftSection {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 6vh;
+    bottom: 0;
+    word-wrap: break-word; /* Позволяет тексту переноситься на новую строку, если не помещается внутри секции */
+    height: 100vh;
+
+}
+
+.rightSection {
+    position: absolute;
+    right: 0;
+    top: 6vh;
+    bottom: 0;
+    word-wrap: break-word; /* Позволяет тексту переноситься на новую строку, если не помещается внутри секции */
+    height: 100vh;
+
+}
+.topSection {
+     background-color: purple;
+     flex: 0 0 auto; /* Занимает доступное место, но не расширяется */
+     height: 5vh; /* Устанавливаем высоту 5vh */
+ }
+
+
+
