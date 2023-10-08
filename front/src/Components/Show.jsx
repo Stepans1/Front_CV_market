@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
+import Button from "react-bootstrap/Button";
 
 
 
@@ -36,8 +37,13 @@ function getPost(){
     return (
 
         <div>
+            <Button as={Link} to="/" variant="secondary">
+                BACK
+            </Button>
 
-            <button id="delete-product-btn" onClick={deleteProducts}>DELETE</button>
+            <Button id="delete-product-btn" onClick={deleteProducts} variant="danger">
+                DELETE
+            </Button>
             <br/>
             <p>{postInfo.id}</p>
             <p>{postInfo.post_body}</p>

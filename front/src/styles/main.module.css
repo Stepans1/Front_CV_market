@@ -3,11 +3,11 @@
   flex-wrap: wrap;
   display: flex;
   padding: 2% 0 0 5%;
+
 }
 
-.App {
-  width: 70%;
-}
+
+
 
 .product {
   width: 20%;
@@ -19,6 +19,18 @@
   /*margin-right: 2%;*/
   margin: 0 5% 5% 0;
   position: relative;
+}
+
+/* Стили для левого отсека (слева) */
+.left-section {
+  flex: 1; /* Занимает всю доступную ширину внутри body */
+  background-color: #f2f2f2; /* Цвет фона левого отсека (можете изменить) */
+}
+
+/* Стили для правого отсека (справа) */
+.right-section {
+  flex: 1; /* Занимает всю доступную ширину внутри body */
+  background-color: #e0e0e0; /* Цвет фона правого отсека (можете изменить) */
 }
 
 .Mass {
@@ -41,6 +53,12 @@ h1 {
   display: inline-block;
   margin-right: 20px;
 }
+
+.margin{
+  margin-top: 7%;
+
+}
+
 
 button {
   box-shadow: 5px 5px 5px black;

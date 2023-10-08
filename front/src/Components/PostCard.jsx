@@ -12,17 +12,10 @@ const PostCard = ({id,postHeader,post_body, post_city,post_type}) => {
         return (
 
             <div className={classes.product} key = {id}>
-             
-
 
                 <br/>
                 <p>{id}</p>
                 <Link to={`/show/${id}`}>{postHeader}</Link>
-
-
-
-
-
 
             </div>
 

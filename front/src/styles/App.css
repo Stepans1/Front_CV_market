@@ -1,3 +1,5 @@
+
+
 * {
   margin: 0;
   padding: 0;
@@ -10,8 +12,8 @@
 }
 
 .App {
-  width: 70%;
+  width: 60%;
   margin: 0 auto;
 }
-
+/* The following line can be included in a src/App.scss */
 /*# sourceMappingURL=App.css.map */

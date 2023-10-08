@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
-import  "./styles/main.module.css"
+//import  "./styles/main.module.css"
 
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Products from "./pages/Products";
+import Posts from "./pages/Posts";
 import AddProduct from "./pages/AddProduct";
 import {Loading} from "./context";
 
 import Show from "./Components/Show";
 import Edit from "./Components/Edit";
+import AddPost from "./Components/AddPost";
+import Test from "./Components/Test";
 
 function App() {
 
@@ -24,9 +26,9 @@ const [loading,setLoading]=useState(false);
 
          <Routes>
 
-                <Route path="/" element={<Products/>}/>
-                <Route path="/addproduct" element={<AddProduct/>}/>
-
+                <Route path="/" element={<Posts/>}/>
+                <Route path="/addPost" element={<AddPost/>}/>
+                <Route path={"/test"} element={<Test/>}/>
                 <Route path="/show/:id" element={<Show/>}/>
                 <Route path="/edit/:id" element={<Edit/>}/>
          </Routes>

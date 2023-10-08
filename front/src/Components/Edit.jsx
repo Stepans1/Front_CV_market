@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
+import Button from "react-bootstrap/Button";
 
 const Edit = () => {
     const {id}=useParams();
-    const [posts,setPost]=useState({post_header:'',post_body:'',post_city:'',
+    const [posts,setPost]=useState({owner:{id:null},post_header:'',post_body:'',post_city:'',
                                                    post_type:'',posts_start_day:'',posts_end_day:'',
                                                    post_requirements:'',post_offer:'',post_contactPhone:'',post_email:''});
     const navigate = useNavigate();
@@ -17,11 +18,53 @@ const Edit = () => {
                 setPost(response.data);
             });
     }
+
+    function back(){
+        navigate(`/show/${id}`);
+    }
+
+    const [minEndDate, setMinEndDate] = useState('');
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todaysDate = year + '-' + month + '-' + day;
+
+
+
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(today.getMonth() + 1);
+    const year_nextMonth = nextMonth.getFullYear();
+    const month_nextMonth = String(nextMonth.getMonth() + 1).padStart(2, '0');
+    const day_nextMonth = String(nextMonth.getDate()).padStart(2, '0');
+    const maxDate = year_nextMonth + '-' + month_nextMonth + '-' + day_nextMonth;
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleStartDateChange = (e) => {
+        const selectedDate = new Date(e.target.value);
+        const selectedDate2 = new Date(e.target.value);
+        selectedDate.setDate(selectedDate.getDate() + 1); // Добавляем один день к начальной дате
+        const formattedDate = formatDate(selectedDate);
+
+        setPost({
+            ...posts,
+            posts_start_day: formatDate(selectedDate2),
+        });
+
+        // Устанавливаем минимальное значение для posts_end_day на один день больше posts_start_day
+        setMinEndDate(formattedDate);
+    };
+
+
     const {
-
-
         handleSubmit,
-
     }=useForm({
         mode:"onBlur",
 
@@ -40,7 +83,7 @@ const Edit = () => {
             });
     }
     function saveChanges() {
-        axios.post(`http://localhost:8088/post/edit/${id}`, posts)
+        axios.post(`http://localhost:8088/post/edit`, posts)
             .then((response) => {
 
                 console.log('Success', response.data);
@@ -62,7 +105,10 @@ const Edit = () => {
 
     return (
         <div>
-
+            <p>{posts.owner.id}</p>
+            <Button onClick={back} variant="secondary">
+                BACK
+            </Button>
             <form onSubmit={handleSubmit(saveChanges)}>
             <label form='body'>Post body</label>
             <input id='body' type="text"  value={posts.post_body}   onChange={e => setPost({...posts, post_body: e.target.value})}/>
@@ -166,8 +212,8 @@ const Edit = () => {
                     }
                 </select>
             <hr/>
-            <label form='posts_start_day'>Post release day</label>
-            <input id='posts_start_day' type='date' value={posts.posts_start_day} onChange={e => setPost({...posts, posts_start_day: e.target.value})}/>
+                <label form='posts_start_day'>Post release day</label>
+                <input id='posts_start_day' defaultValue={posts.posts_start_day} type='date'  min={posts.posts_start_day}  onChange={ handleStartDateChange}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'posts_start_day') {
@@ -178,8 +224,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-            <label form='posts_end_day'>Post die day</label>
-            <input id='posts_end_day' type='date' value={posts.posts_end_day} onChange={e => setPost({...posts, posts_end_day: e.target.value})}/>
+                <label form='posts_end_day'>Post die day</label>
+                <input id='posts_end_day' type='date' defaultValue={posts.posts_end_day} min={minEndDate} max={maxDate}  onChange={e => setPost({...posts, posts_end_day: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'posts_end_day') {
@@ -190,7 +236,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-                <button   type="submit" >Save</button>
+                <Button type="submit" variant="success">Save</Button>
+
             </form>
             <br/>
 

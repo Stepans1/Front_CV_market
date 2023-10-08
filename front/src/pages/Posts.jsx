@@ -2,18 +2,15 @@ import React from 'react';
 import '../styles/App.css';
 import PostList from "../Components/PostList";
 
-function Products() {
+function Posts() {
 
 
 
     return (
-        <div className="App">
-
-
-
+        <div >
             <PostList/>
         </div>
     );
 }
 
-export default Products;
+export default Posts;
