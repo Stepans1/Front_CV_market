@@ -2,24 +2,79 @@
   /* justify-content: space-between;*/
   flex-wrap: wrap;
   display: flex;
-  padding: 2% 0 0 5%;
+  padding: 1% 1% 5% 5%;
+  flex-direction: column;
 
 }
 
+.circle {
+  position: absolute;
+  width: 100px; /* Диаметр круга (замените на свои значения) */
+  height: 100px; /* Диаметр круга (замените на свои значения) */
+  background-color: #3498db; /* Цвет фона круга (по желанию) */
+  border-radius: 50%; /* Создание круглой формы */
+  top: 50%; /* Равноудаленный от верхней границы */
+  transform: translateY(-50%); /* Смещение на -50% высоты, чтобы выровнять по центру */
+  left: 0; /* Расположение круга в левой части родителя */
+}
 
+.circle img {
+  width: 100px; /* Ширина изображения (такая же, как и у круга) */
+  height: 100px; /* Высота изображения (такая же, как и у круга) */
+  object-fit: cover; /* Масштабирование изображения, чтобы оно заполнило круг полностью */
+  border-radius: 50%; /* Устанавливаем радиус для изображения */
+}
 
 
 .product {
-  width: 20%;
+  width: 90%;
   height: 130px;
   border: 2px solid black;
-  padding: 20px 0 0 0;
-  text-align: center;
-  display: inline-block;
-  /*margin-right: 2%;*/
-  margin: 0 5% 5% 0;
+  margin: 1% 5% 1% 5%;
   position: relative;
+  text-align: left;
+
 }
+
+.content {
+  align-content: center;
+  margin-left: 15%;
+  flex: 1; /* Растягиваем остальной контент на всю доступную ширину */
+  border: 2px solid red;
+}
+
+
+.filter{
+  color: #3498db;
+  text-align: center;
+  padding-top: 5%;
+}
+
+.content p {
+  margin: 0; /* Убираем внешние отступы у абзацев в контенте */
+}
+/*.product {*/
+/*  width: 90%;*/
+/*  height: 130px;*/
+/*  border: 2px solid black;*/
+/*  !*padding: 2% 2% 2% 2%;*!*/
+/*  !*text-align: left;*!*/
+/*  display: inline-block;*/
+/*  !*margin-right: 2%;*!*/
+/*  margin: 1% 5% 1% 5%;*/
+/*  position: relative;*/
+/*}*/
+/*.product {*/
+/*  width: 90%;*/
+/*  height: 130px;*/
+/*  border: 2px solid black;*/
+/*  padding: 10px 0 0 0;*/
+/*  text-align: center;*/
+/*  display: block; !* Заменяем display: inline-block; на display: block; *!*/
+/*  margin: 0 5% 5% 0;*/
+/*  position: relative;*/
+/*}*/
+
 
 /* Стили для левого отсека (слева) */
 .left-section {

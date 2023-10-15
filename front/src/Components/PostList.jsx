@@ -12,16 +12,22 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 //get products
 const PostList = function () {
     const {loading} = useContext(Loading);
     let [posts, setPosts] = useState([]);
     const [type,setType]=useState([]);
     const [filter,setFilter]=useState({option:''});
+    const [currentPage, setCurrentPage] = useState(1); // Текущая страница
+    const itemsPerPage = 5;
+
     function selectProducts(){
         axios.get('http://localhost:8088/post/getHeaders')
             .then(response => {
                 setPosts(response.data);
+
             });
     }
     function getType(){
@@ -54,7 +60,17 @@ const PostList = function () {
 
 
 
+    // Логика для отображения элементов на страницах
+    const totalPosts = posts.length;
+    const totalPages = Math.ceil(totalPosts / itemsPerPage);
 
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalPosts);
+    const limitedItems = posts.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
 
 
@@ -124,6 +140,13 @@ return (
             {/*        <option>Empty type</option>*/}
             {/*    }*/}
             {/*</select>*/}
+                <div >
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                        <button className={selections.smallButton} key={index} onClick={() => handlePageChange(index + 1)}>
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
             <div className={classes.buttons}>
                 <Button as={Link} to="/addPost" variant="outline-primary">
                     ADD
@@ -137,8 +160,8 @@ return (
 
         <div className={classes.productList}>
             {posts.length ?
-            posts.map((product) =>
-                 <PostCard key={product.id} id={product.id} postHeader={product.postHeader} />
+            posts.map((post) =>
+                 <PostCard key={post.id} id={post.id} post_header={post.post_header} extra_info={post.extra_info} salary={post.salary} post_type={post.post_type} company={post.company}  />
 
                 )
                 :
@@ -148,8 +171,16 @@ return (
 
 
                 </div>
-        <div className={selections.leftSection}></div>
-        <div className={selections.rightSection}></div>
+        <div className={selections.leftSection}>
+
+        </div>
+        <div className={selections.rightSection}>
+
+                <h3 className={classes.filter}>Filter</h3>
+                <hr/>
+            <label>City</label>
+            
+        </div>
         </div>
     </div>
     );

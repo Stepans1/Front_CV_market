@@ -1,32 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import axios from "axios";
 import {Link, useNavigate, useParams} from "react-router-dom";
+import axios from "axios";
 import {useForm} from "react-hook-form";
-import Button from "react-bootstrap/Button";
+import classes from "../styles/main.module.css";
 
-const Edit = () => {
-    const {id}=useParams();
+const AddPost = () => {
+    // const {id}=useParams();
     const [posts,setPost]=useState({owner:{id:null},post_header:'',post_body:'',post_city:'',
         post_type:'',posts_start_day:'',posts_end_day:'',
         post_requirements:'',post_offer:'',post_contactPhone:'',post_email:'',salary:'',company:'',extra_info:''});
     const navigate = useNavigate();
+    const [people,setPeople]=useState({});
     const [workTypes,setworkTypes]=useState([])
     const [errors, setErrors] = useState({});
-    const [selaryError,setselaryError]=useState('');
-
-    function getPost(){
-        axios.get('http://localhost:8088/post/'+id)
-            .then(response => {
-                setPost(response.data);
-            });
-    }
-
-    function back(){
-        navigate(`/show/${id}`);
-    }
-
+    const [userToFound,setUserToFound]=useState("");
     const [minEndDate, setMinEndDate] = useState('');
-
+    const [selaryError,setselaryError]=useState('');
+    const [ownerError,setOwnerError]=useState('');
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -72,11 +62,19 @@ const Edit = () => {
 
     });
     useEffect(()=> {
-        getPost();
+
         getWorkType();
 
     },[]);
 
+    function findUser(user){
+
+        axios.get('http://localhost:8088/people/getUsersByName?name='+user)
+            .then(response => {
+                setPeople(response.data);
+
+            });
+    }
     function getWorkType(){
         axios.get('http://localhost:8088/post/getWorkType')
             .then(response => {
@@ -84,21 +82,25 @@ const Edit = () => {
 
             });
     }
-    function saveChanges() {
+    function save() {
         setselaryError('');
-        axios.post(`http://localhost:8088/post/edit`, posts)
+
+        console.log(posts);
+        axios.post(`http://localhost:8088/post/save`, posts)
             .then((response) => {
 
-                console.log('Success', response.data);
-                navigate("/");
+
+                    console.log('Success', response.data);
+                    navigate("/");
+
             })
             .catch((error) => {
-
                 if (error.response.status === 409) {
-                        // Другая ошибка, например, конфликт
-                        setselaryError(error.response.data);
-                        // Здесь обработка других типов ошибок
+                    // Другая ошибка, например, конфликт
+                    setselaryError(error.response.data);
+                    // Здесь обработка других типов ошибок
                 }
+
                 if (error.response && error.response.status === 400) {
 
                     const validationErrors = error.response.data;
@@ -114,25 +116,52 @@ const Edit = () => {
 
     return (
         <div>
-            <p>{posts.owner.id}</p>
-            <Button onClick={back} variant="secondary">
-                BACK
-            </Button>
-            <form onSubmit={handleSubmit(saveChanges)}>
-            <label form='body'>Post body</label>
-            <input id='body' type="text"  value={posts.post_body}   onChange={e => setPost({...posts, post_body: e.target.value})}/>
+
+                <button ><Link to='/'>Back</Link></button>
+
+            <form onSubmit={handleSubmit(save)}>
+                <label form='body'>Post body</label>
+                <input id='body' type="text"     onChange={e => setPost({...posts, post_body: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
-                    if (error.field === 'post_body') {
-                        return <div key={index} className="error">{error.error}</div>;
-                    }
+                        if (error.field === 'post_body') {
+                            return <div key={index} className="error">{error.error}</div>;
+                        }
 
 
-                }):
-                <div></div>}
+                    }):
+                    <div></div>}
                 <hr/>
-            <label form='city'>City</label>
-            <input id='city' type="text" value={posts.post_city}  onChange={e => setPost({...posts, post_city: e.target.value})}/>
+                <label form='owner'>Owner</label>
+                <input id='owner' type="text"   onChange={e => findUser( e.target.value)}/>
+                <select
+                    
+                    id="Owner"
+                    onChange={e => setPost({...posts, owner:{id: e.target.value}})}
+                >
+
+
+                    {people.length ?
+                        people.map((item) => (
+                            <option value={item.id} key={item.id}>{item.id}) {item.name}</option>
+                        ))
+                        :
+                        <option>Empty list</option>
+                    }
+                </select>
+                {errors.length ?
+                    errors.map((error) => {
+                        if (error.field === 'owner') {
+                            return <div  className="error">{error.error}</div>;
+                        }
+
+
+                    }):
+                    <div></div>}
+
+                <hr/>
+                <label form='city'>City</label>
+                <input id='city' type="text"   onChange={e => setPost({...posts, post_city: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_city') {
@@ -143,8 +172,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-            <label form='phone'>Phone</label>
-            <input id='phone' type='text' value={posts.post_contactPhone}  onChange={e => setPost({...posts, post_contactPhone: e.target.value})}/>
+                <label form='phone'>Phone</label>
+                <input id='phone' type='text'   onChange={e => setPost({...posts, post_contactPhone: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_contactPhone') {
@@ -155,8 +184,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-            <label form='email'>Email</label>
-            <input id='email' type='text' value={posts.post_email} onChange={e => setPost({...posts, post_email: e.target.value})} />
+                <label form='email'>Email</label>
+                <input id='email' type='text'  onChange={e => setPost({...posts, post_email: e.target.value})} />
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_email') {
@@ -166,9 +195,9 @@ const Edit = () => {
 
                     }):
                     <div></div>}
-            <hr/>
-            <label form='header'>Header</label>
-            <input id='header' type='text' value={posts.post_header} onChange={e => setPost({...posts, post_header: e.target.value})}/>
+                <hr/>
+                <label form='header'>Header</label>
+                <input id='header' type='text'  onChange={e => setPost({...posts, post_header: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_header') {
@@ -179,8 +208,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-            <label form='offer'>What are you offering?</label>
-            <input id='offer' type='text' value={posts.post_offer} onChange={e => setPost({...posts, post_offer: e.target.value})}/>
+                <label form='offer'>What are you offering?</label>
+                <input id='offer' type='text'  onChange={e => setPost({...posts, post_offer: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_offer') {
@@ -191,8 +220,8 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-            <label form='post_requirements'>What do you expect?</label>
-            <input id='post_requirements' type='text' value={posts.post_requirements} onChange={e => setPost({...posts, post_requirements: e.target.value})}/>
+                <label form='post_requirements'>What do you expect?</label>
+                <input id='post_requirements' type='text'  onChange={e => setPost({...posts, post_requirements: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'post_requirements') {
@@ -202,12 +231,13 @@ const Edit = () => {
 
                     }):
                     <div></div>}
-            <hr/>
-            <label form='post_type'>What type of work </label>
+                <hr/>
+                <label form='post_type'>What type of work </label>
                 <select
-                     value={posts.post_type}
-                    id="WorkType"
+                    defaultValue="Remote" // Установите значение по умолчанию здесь
 
+                    id="WorkType"
+                    value={posts.post_type}
                     onChange={e => setPost({...posts, post_type: e.target.value})}
                 >
                     {/*<option value="" disabled>Type filter</option>*/}
@@ -219,10 +249,20 @@ const Edit = () => {
                         :
                         <option>Empty type</option>
                     }
+
                 </select>
-            <hr/>
+                {errors.length ?
+                    errors.map((error, index) => {
+                        if (error.field === 'post_type') {
+                            return <div key={index} className="error">{error.error}</div>;
+                        }
+
+
+                    }):
+                    <div></div>}
+                <hr/>
                 <label form='posts_start_day'>Post release day</label>
-                <input id='posts_start_day' defaultValue={posts.posts_start_day} type='date'  min={posts.posts_start_day}  onChange={ handleStartDateChange}/>
+                <input id='posts_start_day' type='date'  min={todaysDate}  onChange={ handleStartDateChange}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'posts_start_day') {
@@ -234,7 +274,7 @@ const Edit = () => {
                     <div></div>}
                 <hr/>
                 <label form='posts_end_day'>Post die day</label>
-                <input id='posts_end_day' type='date' defaultValue={posts.posts_end_day} min={minEndDate} max={maxDate}  onChange={e => setPost({...posts, posts_end_day: e.target.value})}/>
+                <input id='posts_end_day' type='date'  min={minEndDate} max={maxDate}  onChange={e => setPost({...posts, posts_end_day: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'posts_end_day') {
@@ -246,7 +286,7 @@ const Edit = () => {
                     <div></div>}
                 <hr/>
                 <label form='salary'>Salary</label>
-                <input id='salary' type="text" defaultValue={posts.salary}   onChange={e => setPost({...posts, salary: e.target.value})}/>
+                <input id='salary' type="text"   onChange={e => setPost({...posts, salary: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'salary') {
@@ -258,11 +298,11 @@ const Edit = () => {
                     <div></div>}
                 {selaryError!=='' ?
                     <p>{selaryError}</p>
-                    :
+                  :
                     <div></div>}
                 <hr/>
                 <label form='company'>Company</label>
-                <input id='company' type="text" defaultValue={posts.company}  onChange={e => setPost({...posts, company: e.target.value})}/>
+                <input id='company' type="text"   onChange={e => setPost({...posts, company: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'company') {
@@ -274,7 +314,7 @@ const Edit = () => {
                     <div></div>}
                 <hr/>
                 <label form='extra_info'>Extra info (max 60 symbols)</label>
-                <input id='extra_info' type="text"  defaultValue={posts.extra_info} onChange={e => setPost({...posts, extra_info: e.target.value})}/>
+                <input id='extra_info' type="text"   onChange={e => setPost({...posts, extra_info: e.target.value})}/>
                 {errors.length ?
                     errors.map((error, index) => {
                         if (error.field === 'extra_info') {
@@ -285,8 +325,7 @@ const Edit = () => {
                     }):
                     <div></div>}
                 <hr/>
-                <Button type="submit" variant="success">Save</Button>
-
+                <button   type="submit" >Save</button>
             </form>
             <br/>
 
@@ -294,4 +333,4 @@ const Edit = () => {
     );
 };
 
-export default Edit;
+export default AddPost;
