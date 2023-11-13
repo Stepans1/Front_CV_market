@@ -46,7 +46,7 @@ function getPost(){
             </Button>
             <br/>
             <p>{postInfo.id}</p>
-            <p>{postInfo.post_body}</p>
+            <p>{postInfo.post_header}</p>
             <Link to={`/edit/${postInfo.id}`}>edit</Link>
         </div>
     );

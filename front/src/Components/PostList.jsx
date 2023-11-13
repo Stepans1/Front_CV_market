@@ -22,38 +22,27 @@ const PostList = function () {
     const [filter,setFilter]=useState({option:''});
     const [currentPage, setCurrentPage] = useState(1); // Текущая страница
     const itemsPerPage = 5;
+    const username = 'TestName';
+    const password = 'TestPassword';
+    const config = {
+        headers: {
+            Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+        },
+    };
 
     function selectProducts(){
-        axios.get('http://localhost:8088/post/getHeaders')
+        axios.get('http://localhost:8088/post/getHeaders' )
             .then(response => {
                 setPosts(response.data);
-
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
             });
     }
-    function getType(){
-        axios.get(`http://localhost/magaz/back-end/public/type`)
-            .then(response => {
-
-                setType(response.data);
-
-            });
 
 
-    }
-    function filtering(filterType){
-        axios.get(`http://localhost/magaz/back-end/public/getByType?type=`+ filterType)
-            .then(response => {
-                posts=[];
-
-                setPosts(response.data);
-
-            });
-
-
-    }
     useEffect(()=> {
         selectProducts();
-        getType();
 
     },[loading]);
 
@@ -117,29 +106,7 @@ return (
             <div className={selections.mainContent}>
             <header>
                 <h1>Posts</h1><br/>
-            {/*<select*/}
-            {/*    // defaultValue={""}*/}
-            {/*    id="typeFilter"*/}
-            {/*    value={filter.option}*/}
-            {/*    onChange={(e) => {*/}
 
-            {/*        setFilter({*/}
-            {/*            option: e.target.value*/}
-            {/*        });*/}
-
-            {/*          filtering(e.target.value);*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <option value="" disabled>Type filter</option>*/}
-            {/*    <option value="all" >All</option>*/}
-            {/*    {type.length ?*/}
-            {/*        type.map((t) =>*/}
-            {/*            <option key={t.type} value={t.type} id={t.type}>{t.type}</option>*/}
-            {/*        )*/}
-            {/*        :*/}
-            {/*        <option>Empty type</option>*/}
-            {/*    }*/}
-            {/*</select>*/}
                 <div >
                     {Array.from({ length: totalPages }).map((_, index) => (
                         <button className={selections.smallButton} key={index} onClick={() => handlePageChange(index + 1)}>
@@ -161,7 +128,7 @@ return (
         <div className={classes.productList}>
             {posts.length ?
             posts.map((post) =>
-                 <PostCard key={post.id} id={post.id} post_header={post.post_header} extra_info={post.extra_info} salary={post.salary} post_type={post.post_type} company={post.company}  />
+                 <PostCard key={post.id} id={post.id} post_header={post.post_header} salary={post.salary} post_type={post.post_type} company={post.company}  />
 
                 )
                 :

@@ -36,6 +36,11 @@
 
 }
 
+
+.pageExample{
+  text-align: left;
+}
+
 .content {
   align-content: center;
   margin-left: 15%;
@@ -115,9 +120,9 @@ h1 {
 }
 
 
-button {
-  box-shadow: 5px 5px 5px black;
-}
+/*button {*/
+/*  box-shadow: 5px 5px 5px black;*/
+/*}*/
 
 .delete-checkbox {
   padding: 15px;

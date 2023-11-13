@@ -6,7 +6,7 @@ import {ListGroup} from "react-bootstrap";
 import image from "../images/11-komoz-3att.png"
 
 
-const PostCard = ({id,post_header,extra_info, salary,post_type,company}) => {
+const PostCard = ({id,post_header, salary,post_type,company}) => {
     if (id != null) {
 
 

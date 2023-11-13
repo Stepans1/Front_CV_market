@@ -13,10 +13,8 @@ const AddPost = () => {
     const [people,setPeople]=useState({});
     const [workTypes,setworkTypes]=useState([])
     const [errors, setErrors] = useState({});
-    const [userToFound,setUserToFound]=useState("");
     const [minEndDate, setMinEndDate] = useState('');
     const [selaryError,setselaryError]=useState('');
-    const [ownerError,setOwnerError]=useState('');
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
