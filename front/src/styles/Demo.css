@@ -306,6 +306,12 @@ select {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
+.btn-blue {
+    margin-right: 1vh;
+    background-color: white;
+    color: black;
+}
+
 .btn-white {
     margin-right: 1vh;
     background-color: #8ae3da;
@@ -322,11 +328,11 @@ select {
     top: 0;
     left: 0;
     z-index: -1;
-    transition: all .4s;
+    /*transition: all .4s;*/
 }
 
 .btn-white::after {
-    background-color: #fff;
+    background-color: white;
 }
 
 .btn:hover::after {

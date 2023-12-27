@@ -1,12 +1,19 @@
 import React, {useState} from 'react';
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import '../styles/login.css';
+import {Link, useNavigate} from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 
 const Login = () => {
 
     const [username,setUsername]=useState();
     const [password,setPassword]=useState();
     const [error,setError]=useState();
+    const navigate = useNavigate();
+    const [decodedToken, setDecodedToken] = useState(null);
+
     function send() {
         console.log(username);
         setError("")
@@ -17,16 +24,23 @@ const Login = () => {
             .then((response) => {
 
 
-                console.log('Success', response.data);
+                // console.log('Success', response.data);
                 localStorage.removeItem("jwt");
                 localStorage.setItem("jwt",response.data['jwt-token'])
+                const decodedToken = jwtDecode(localStorage.getItem("jwt"));
+
+                console.log(decodedToken.role);
+                if (decodedToken.role.includes("ROLE_ADMIN")){
+                   navigate("/admin/cross");
+                }else {
+                    navigate("/");
+                }
+
 
             })
             .catch((error) => {
                 if (error.response.status === 401) {
-                    // Другая ошибка, например, конфликт
                     setError(error.response.data.message);
-                    // Здесь обработка других типов ошибок
                 }
 
 
@@ -51,8 +65,15 @@ const Login = () => {
     };
 
         return (
-            <form onSubmit={handleSubmit(send)}>
-                {error}
+         <div>
+                <header>
+                    <div className={"colored"}>
+                        <h1 className={"main-header"}>IT Market<br/>Login</h1>
+                    </div>
+                </header>
+             <div className="centered">
+                <form  onSubmit={handleSubmit(send)}>
+                    <h3 className={"errorMsg"}>{error}</h3>
                 <label>
                     Username:
                     <input type="text" name="username"  onChange={e => setUsername(  e.target.value)} />
@@ -61,8 +82,16 @@ const Login = () => {
                     Password:
                     <input type="password" name="password" onChange={e => setPassword(  e.target.value)} />
                 </label>
-                <button type="submit">Login</button>
-            </form>
+
+                    <button type={"submit"} className="btn btn-white btn-animate">Login</button>
+                    <h6>Don't have an account yet? </h6>
+                    {/*<a href={}>Register now .</a>*/}
+                    <Link to="/public/register">Register now .</Link>
+                </form>
+
+        </div>
+
+         </div>
         );
 
 };

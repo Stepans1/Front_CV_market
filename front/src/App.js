@@ -11,10 +11,11 @@ import Edit from "./Components/Edit";
 import AddPost from "./Components/AddPost";
 import Test from "./Components/Test";
 import Demo from "./Components/Demo";
-import Login from "./Components/Login";
+import Login from "./authorization/Login";
 import axios from "axios";
 import GuestRoutes from "./routes/GuestRoutes";
 import UserRoutes from "./routes/UserRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
 
@@ -51,24 +52,25 @@ const [loading,setLoading]=useState(false);
   return (
       <div className='App'>
 
-          <Loading.Provider value={{
-              loading,
-              setLoading
-          }}>
+          {/*<Loading.Provider value={{*/}
+          {/*    loading,*/}
+          {/*    setLoading*/}
+          {/*}}>*/}
         <BrowserRouter >
 
-         <Routes>
+         <Routes >
 
-
+             <Route path="/" element={<Demo/>} />
              <Route path="/public/*" element={<GuestRoutes />} />
 
+             <Route path="/admin/*" element={<AdminRoutes/>} />
 
              <Route path="/private/*" element={<UserRoutes />} />
          </Routes>
 
 
         </BrowserRouter>
-          </Loading.Provider>
+          {/*</Loading.Provider>*/}
       </div>
   );
 }

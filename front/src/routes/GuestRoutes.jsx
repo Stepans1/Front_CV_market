@@ -6,7 +6,8 @@ import Test from "../Components/Test";
 import Show from "../Components/Show";
 import Edit from "../Components/Edit";
 import Demo from "../Components/Demo";
-import Login from "../Components/Login";
+import Login from "../authorization/Login";
+import Registration from "../authorization/Registration";
 
 const GuestRoutes = () => {
     return (
@@ -19,7 +20,7 @@ const GuestRoutes = () => {
                     <Route path="/demo" element={<Demo/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/" element={<Posts/>}/>
-
+                    <Route path="/register" element={<Registration/>}/>
                 </Routes>
 
 

@@ -3,7 +3,7 @@ import classes from "../styles/main.module.css"
 import Card from 'react-bootstrap/Card';
 import {Link} from "react-router-dom";
 import {ListGroup} from "react-bootstrap";
-import image from "../images/11-komoz-3att.png"
+import image from "../images/icon-image-not-found-free-vector.jpg"
 
 
 const PostCard = ({id,post_header, salary,post_type,company}) => {
@@ -19,8 +19,9 @@ const PostCard = ({id,post_header, salary,post_type,company}) => {
                 <div className={classes.content}>
                    <h5><Link to={`/show/${id}`}>{post_header}</Link></h5>
                    <hr/>
-                    <h3>Salary: {salary}$</h3>
                     <h5>This post is shared by {company}</h5>
+                    <h6>Salary: {salary}$</h6>
+
 
                 </div>
 

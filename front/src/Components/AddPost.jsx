@@ -93,7 +93,7 @@ const AddPost = () => {
 
             })
             .catch((error) => {
-                if (error.response.status === 409) {
+                if (error.response.status === 406) {
                     // Другая ошибка, например, конфликт
                     setselaryError(error.response.data);
                     // Здесь обработка других типов ошибок

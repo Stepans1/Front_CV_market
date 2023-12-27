@@ -4,8 +4,14 @@ import Demo from "../Components/Demo";
 import axios from "axios";
 import Edit from "../Components/Edit";
 import AddPost from "../Components/AddPost";
+import Cookies from 'js-cookie';
+import Registration from "../authorization/Registration";
+import Test from "../Components/Test";
+import AddPostByUser from "../actionWithPost/AddPostByUser";
 
 const UserRoutes = () => {
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 100 * 60 * 1000);
     const navigate = useNavigate();
     const config = {
         headers: {
@@ -14,19 +20,20 @@ const UserRoutes = () => {
         },
     };
     function findJwt(){
-        console.log(localStorage.getItem("jwt"));
        // localStorage.clear();
        // localStorage.setItem("jwt","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
         axios.post('http://localhost:8088/api/accounts/validateJWT',{},config)
             .then((response) => {
-
-
-                console.log('Success', response.data);
+               // Cookies.remove('userName');
+                Cookies.set('userID',response.data.id, { expires: expiresAt, path: '/' });
+                Cookies.set('userName', response.data.username, { expires: expiresAt, path: '/' });
+                console.log(Cookies.get('userName'));
+                // console.log('Success', response.data);
               //  localStorage.setItem("jwt",response.data)
 
             })
             .catch((error) => {
-                if (error.response.status === 401) {
+                if (error.response.status === 401||error.response.status===403) {
                     navigate("/public/login")
                 }
 
@@ -43,8 +50,8 @@ const UserRoutes = () => {
         <div>
             <Routes>
 
-                <Route path="/addPost" element={<AddPost/>}/>
-                <Route path="/demo" element={<Demo/>}/>
+                <Route path="/addPost" element={<AddPostByUser/>}/>
+                {/*<Route path="/demo" element={<Demo/>}/>*/}
                 <Route path="/edit/:id" element={<Edit/>}/>
 
             </Routes>

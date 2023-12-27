@@ -1,26 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import PostCard from "./PostCard";
-import selections from "../styles/Selections.module.css"
-//import classes from "./Posts.module.css";
-import classes from "../styles/main.module.css"
-import {Link, useNavigate} from "react-router-dom";
-import {useContext} from "react";
-import {Loading} from "../context";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/addPost.css';
+import {useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
-
-import image from "../images/11-komoz-3att.png"
-
-//get products
-const Test = function () {
+import axios from "axios";
+import Cookies from 'js-cookie';
+const AddPostByUser = () => {
     const [testId,setTestId]=useState()
-    const [posts,setPost]=useState({owner:{id:null},post_header:'',post_city:'',
+    const [posts,setPost]=useState({owner:{id:Cookies.get('userID')},post_header:'',post_city:'',
         post_type:'Remote',posts_start_day:'',posts_end_day:'',post_contactPhone:'',post_email:'',salary:'',company:''});
     const navigate = useNavigate();
     const [valid,setValid]=useState(null);
@@ -70,7 +56,8 @@ const Test = function () {
 
     const [data, setData] = useState([]);
     const [newTitle, setNewTitle] = useState('');
-    const [newBody, setNewBody] = useState('');
+    let [newBody, setNewBody] = useState();
+    const [chunks,setChunks]=useState([]);
 
     const username = 'TestName';
     const password = 'TestPassword';
@@ -80,10 +67,16 @@ const Test = function () {
         },
     };
     const handleAddItem = () => {
+
+        // newBody=newBody.match(/.{1,20}/g) || [];
+
         const newItem = { title: newTitle, body: newBody };
+
+
         setData([...data, newItem]);
         setNewTitle('');
         setNewBody('');
+
     }
 
     const {
@@ -126,6 +119,7 @@ const Test = function () {
     }
 
     function save(){
+
         const test={posts,data}
         console.log(test);
         axios.post(`http://localhost:8088/post/save`, test,config)
@@ -135,7 +129,7 @@ const Test = function () {
                 console.log('Success', response.data);
                 // navigate("/");
 
-           })
+            })
     }
     function validate() {
         setselaryError('');
@@ -151,7 +145,7 @@ const Test = function () {
 
             })
             .catch((error) => {
-                if (error.response.status === 409) {
+                if (error.response.status === 406) {
                     // Другая ошибка, например, конфликт
                     setselaryError(error.response.data);
                     // Здесь обработка других типов ошибок
@@ -174,112 +168,54 @@ const Test = function () {
 
     }
 
+    const [file, setFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        // Получаем файл из input и сохраняем его в состоянии
+        setFile(event.target.files[0]);
+    };
+
+    const handleUpload = async () => {
+        if (file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Отправляем запрос на сервер
+                await axios.post('http://localhost:8088/post/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                // После успешной загрузки можно добавить обработку ответа или выполнить действия после загрузки
+                console.log('Файл успешно загружен!');
+            } catch (error) {
+                console.error('Ошибка загрузки файла:', error);
+            }
+        } else {
+            console.error('Файл не выбран.');
+        }
+    };
+
 
 
     return (
-
         <div>
             <header>
+
                 <div className={"colored"}>
                     <h1 className={"main-header"}>IT Market</h1>
                 </div>
 
-            <div className={selections.wrapper}>
-                <div className={selections.mainContent}>
-
-
-
-                        {valid!==true ?
-                            <button disabled={true} onClick={save} >Save</button>
-                            :
-                            <button onClick={save} >Save</button>
-                        }
-
-
-
-
-                    <hr/>
-                    <div className={classes.product} >
-                        <div className={classes.circle}>
-                            <img src={image}/>
-                        </div>
-
-                        <div className={classes.content}>
-                            <h4>{posts.post_header},{posts.post_type}</h4>
-                            <hr/>
-                            <h4>Salary: {posts.salary}$</h4>
-                            <h5>This post is shared by {posts.company}</h5>
-
-                        </div>
-
-                    </div>
-                    <label><h3>Page example</h3></label>
-                    <div className={classes.pageExample}>
-
-                        <h3>{posts.post_header}</h3>
-                        <h4>Work type {posts.post_type},{posts.post_city}</h4>
-                        <h4>Izvietots līdz {posts.posts_end_day}</h4>
-                        <h4>Post is published by {posts.company}</h4>
-                        <hr/>
-                        <ul>
-                            {data.map((item, index) => {
-                            return (
-                                <li key={index}>
-                                    <h3>{item.title}</h3>
-                                    <h4>{item.body}</h4>
-
-                                </li>
-
-                            );
-                            })}
-                        </ul>
-                        <hr/>
-                        <h3>Contact information </h3>
-                        <h4>Email {posts.post_email}</h4>
-                        <h4>Phone {posts.post_contactPhone}</h4>
-                    </div>
-                </div>
-
-                <div className={selections.leftSection}>
-                    <div>
-                        <h3>Mandatory information</h3>
-
+            </header>
+            <div style={{display: 'flex'}}>
+                <section style={{flex: 1}}>
+                    <div className={"section-content"}>
+                        {/* Content for left section goes here */}
                         <form onSubmit={handleSubmit(validate)}>
 
-                            <label form='owner'>Owner</label>
-                            <input id='owner' type="text"   onChange={e => findUser( e.target.value)}/>
-                            <select
 
-                                id="Owner"
-                                onClick={e => setPost({
-                                    ...posts,
-                                    owner: {
-                                        ...posts.owner,
-                                        id: e.target.value
-                                    }
-                                })}
-                            >
-
-
-                                {people.length ?
-                                    people.map((item) => (
-                                        <option value={item.id} key={item.id}>{item.id}) {item.name}</option>
-                                    ))
-                                    :
-                                    <option>Empty list</option>
-                                }
-                            </select>
-                            {errors.length ?
-                                errors.map((error) => {
-                                    if (error.field === 'owner') {
-                                        return <div  className="error">{error.error}</div>;
-                                    }
-
-
-                                }):
-                                <div></div>}
-
-                            <hr/>
                             <label form='city'>City</label>
                             <input id='city' type="text"   onChange={e => setPost({...posts, post_city: e.target.value})}/>
                             {errors.length ?
@@ -412,38 +348,78 @@ const Test = function () {
                                 }):
                                 <div></div>}
                             <hr/>
+
                             {valid===true?
                                 <h3>Validation success</h3>
-                            :
-                            <div></div>}
+                                :
+                                <div></div>}
                             <button   type="submit" >Apply</button>
                         </form>
-                        <br/>
 
                     </div>
-                </div>
-                <div className={selections.rightSection}>
+                </section>
 
-                    <label >Topic</label>
-                    <input  type="text"
-                            placeholder="Key"
-                            value={newTitle}
-                            onChange={(e) => setNewTitle(e.target.value)}/>
-                    <hr/>
-                    <label>Body</label>
-                    <textarea rows="20" cols="45" name="text" type="text"
-                              placeholder="Value"
-                              value={newBody}
-                              onChange={(e) => setNewBody(e.target.value)}/>
-                    <button onClick={handleAddItem}>Добавить</button>
+                <section style={{flex: 2}}>
+                    <div className={"main-content"}>
+                        {/* Content for center section goes here */}
+                        {valid!==true ?
+                            <button disabled={true} onClick={save} >Save</button>
+                            :
+                            <button onClick={save} >Save</button>
+                        }
+                        <h2 className={"header-example"}>{posts.post_header}</h2>
+                        {posts.salary!==''?<h5 className={"salary-example"}>Declared salary {posts.salary}$</h5>:<h4></h4>}
+                        {posts.post_type!==''?<h5 className={"salary-example"}>Work type {posts.post_type}</h5>:<h4></h4>}
+                        {posts.posts_end_day!==''?<h5 className={"salary-example"}>Ad active until {posts.posts_end_day}</h5>:<h4></h4>}
+                        {posts.company!==''?<h5 className={"salary-example"}>Ad published by {posts.company}</h5>:<h5></h5> }
 
-                </div>
+
+
+                        <ul style={{paddingTop:"5%"}}>
+                            {data.map((item, index) => {
+                                return (
+                                    <li style={{textAlign:"left"}} key={index}>
+                                        <h3>{item.title}</h3>
+                                        <h4>{item.body}</h4>
+                                        {/*{item.body.map((chunk, index) => (*/}
+                                        {/*    <h6 key={index}>{chunk}</h6>*/}
+                                        {/*))}*/}
+                                    </li>
+
+                                );
+                            })}
+                        </ul>
+                        <hr/>
+                        <h2>Contact information </h2>
+                        {posts.post_email!==''?<h5 className={"salary-example"}>Email {posts.post_email}</h5>:<h5></h5> }
+                        {posts.post_contactPhone!==''?<h5 className={"salary-example"}>Phone {posts.post_contactPhone}</h5>:<h5></h5> }
+
+
+                    </div>
+                </section>
+
+                <section style={{flex: 1}}>
+                    <div className={"section-content"}>
+                        {/* Content for right section goes here */}
+                        <label >Topic</label>
+                        <input  type="text"
+                                placeholder="Key"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}/>
+                        <hr/>
+                        <label>Body</label>
+                        <textarea rows="20" cols="45" name="text" type="text"
+                                  placeholder="Value"
+                                  value={newBody}
+                                  onChange={(e) => setNewBody(e.target.value)}/>
+                        <button onClick={handleAddItem}>Добавить</button>
+
+                    </div>
+                </section>
             </div>
-            </header>
+
         </div>
     );
-}
+};
 
-
-
-export default Test;
+export default AddPostByUser;
